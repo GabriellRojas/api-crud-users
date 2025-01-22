@@ -9,7 +9,6 @@ export async function contactRoutes(fastify: FastifyInstance) {
     fastify.addHook('preHandler', authMiddleware)
 
     fastify.post<{ Body: ContactCreate }>('/', async (req, reply) => {
-
         const { name, email, phone } = req.body
         const emailUser = req.headers['email']
 
@@ -25,4 +24,18 @@ export async function contactRoutes(fastify: FastifyInstance) {
             reply.send(error)
         }
     })
+
+    fastify.get('/', async (req, reply) => {
+        const emailUser = req.headers['email']
+
+        try {
+            const data = await contactUseCase.listAllContacts(emailUser)
+            return reply.send(data)
+        } 
+        catch (error) {
+            reply.send(error)
+        }
+    })
+
+    // falta criar as rotas de update e delete de contato
 }
